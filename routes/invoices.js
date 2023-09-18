@@ -44,10 +44,25 @@ router.post('/', async(req, res, next) => {
 
 router.put('/:id', async(req, res, next) => {
     try {
-        const {id} = req.params
-        const {amt} = req.body
+        const id = req.params.id
+        const {amt, has_paid} = req.body
+        let paidDate = null
+        const currentResults = await db.query(`SELECT has_paid
+                                                FROM invoices
+                                                WHERE id=${id}`)
+        if (currentResults.rows.length === 0) {
+            throw new ExpressError(`No such invoice: ${id}`, 404);
+        }
+        const currentPaidDate = currentResults.rows[0].paid_date;
+        if (!currentPaidDate && has_paid) {
+            paidDate = new Date()
+        } else if (!has_paid) {
+            paidDate = null
+        } else {
+            paidDate = currentPaidDate
+        }
         const results = await db.query(`UPDATE invoices
-                                        SET amt=${amt}
+                                        SET amt=${amt}, has_paid=${has_paid}
                                         WHERE id=${id}
                                         RETURNING *`)
         return res.json(results.rows)

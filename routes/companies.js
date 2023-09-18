@@ -3,6 +3,7 @@ const slugify = require('slugify')
 const router = express.Router();
 const db = require("../db");
 const ExpressError = require('../ExpressError');
+// const { v4: uuidv4 } = require('uuid')
 
 router.get('/', async (req, res, next) => {
     try {

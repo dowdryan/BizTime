@@ -30,3 +30,27 @@ INSERT INTO invoices (comp_Code, amt, has_paid, paid_date)
          ('apple', 200, false, null),
          ('apple', 300, true, '2018-01-01'),
          ('ibm', 400, false, null);
+
+-- Further Study
+DROP TABLE IF EXISTS industries;
+DROP TABLE IF EXISTS company_industries;
+
+CREATE TABLE industries (
+  code VARCHAR(20) PRIMARY KEY,
+  industry VARCHAR(20) NOT NULL
+);
+
+INSERT INTO industries
+  VALUES ('Acct', 'Accounting'),
+         ('HR', 'Human Resources');
+
+CREATE TABLE company_industries (
+  company_code text REFERENCES companies(code) ON DELETE CASCADE,
+  industry_code VARCHAR(20) REFERENCES industries(code) ON DELETE CASCADE,
+  PRIMARY KEY (company_code, industry_code)
+);
+
+INSERT INTO company_industries (company_code, industry_code)
+  VALUES ('apple', 'Acct'),
+         ('apple', 'HR'),
+         ('ibm', 'HR');
